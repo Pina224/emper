@@ -1,0 +1,395 @@
+local a={}
+local l={}
+local acs={}
+local fl={}
+local chc=nil
+local chch=nil
+local chr=nil
+local con=nil
+local ad=nil
+local chp=nil
+local ip=nil
+local g=game
+local oc=os.clock
+local sim=oc()
+local tim=0
+local ltim=0
+local dt=0
+local inn=Instance.new
+local t=task
+local tw=t.wait
+local ts=t.spawn
+local cf=CFrame
+local cfn=CFrame.new
+local cfa=CFrame.Angles
+local cfi=CFrame.identity
+local acst={
+	{m="13421774668",t="13415110780",n="Torso"},
+	{m="11159370334",t="11159284657",n="Right Arm",c=cfa(0,-1.57,1.57)},
+	{m="11263221350",t="11263219250",n="Left Arm",c=cfa(0,1.57,1.57)},
+	{m="14768684979",t="14768683674",n="Right Leg",c=cfa(0,0,1.57)},
+	{m="14768684979",t="14768683674",n="Left Leg",c=cfa(0,0,1.57)}
+}
+local ans=cfi
+local ma=math
+local mi=ma.min
+local si=ma.sin
+local mr=ma.random
+local sm=string.match
+local v=Vector3
+local vz=v.zero
+local vn=v.new
+local ls=vn(1,2,1)
+local trs=vn(2,2,1)
+local rad=vn(0,-1000,0)
+local vf=vn(8192,8192,8192)
+local t=table
+local ti=t.insert
+local tc=t.clear
+local w=g:FindFirstChildOfClass('Workspace')
+local rs=g:FindFirstChildOfClass('RunService')
+local ui=g:FindFirstChildOfClass("UserInputService")
+local sg=g:FindFirstChildOfClass('StarterGui')
+local cc=w.CurrentCamera
+local prs=rs.PreSimulation
+local ps=rs.PostSimulation
+local lp=g:FindFirstChildOfClass('Players').LocalPlayer
+local mo=lp:GetMouse()
+local u=Enum.UserInputType
+local ut=u.Touch
+local um=u.MouseButton1
+local rp=RaycastParams.new()
+rp.FilterType=Enum.RaycastFilterType.Exclude
+local shp=sethiddenproperty
+local function fc()
+	cc=w.CurrentCamera
+	if not cc then
+		w:GetPropertyChangedSignal('CurrentCamera'):Wait()
+		cc=w.CurrentCamera
+	end
+	w:GetPropertyChangedSignal('CurrentCamera'):Connect(function()
+		cc=w.CurrentCamera
+	end)
+end
+local function e(i)
+	return typeof(i)=='Instance'and i:IsDescendantOf(g)
+end
+local function fi(p,cn,n)
+	if typeof(p)=='Instance'then
+		for _,i in pairs(p:GetChildren())do
+			if i:IsA(cn) and i.Name==n then
+				return i
+			end
+		end
+	end
+end
+local function wfcoc(p,cn)
+	if typeof(p)=='Instance'then
+		local i=p:FindFirstChildOfClass(cn)
+		while e(p)and not i do
+			p.ChildAdded:Wait()
+			i=p:FindFirstChildOfClass(cn)
+		end
+		return i
+	end
+end
+local function wfcocan(p,...)
+	if typeof(p)=='Instance'then
+		local i=fi(p,...)
+		while e(p)and not i do
+			p.ChildAdded:Wait()
+			i=fi(p,...)
+		end
+		return i
+	end
+end
+local r=inn('Model')
+local function pt(n,s)
+	local pa=inn('Part')
+	pa.Name=n
+	pa.Size=s
+	pa.Transparency=1
+	pa.Parent=r
+	return pa
+end
+local function m(n,p0,p1,c0,c1)
+	local m=inn('Motor6D')
+	m.Name=n
+	m.Part0=p0
+	m.Part1=p1
+	m.C0=c0
+	m.C1=c1
+	m.Parent=p0
+	return m
+end
+local function at(n,cf,p)
+	local a=inn('Attachment')
+	a.Name=n
+	a.CFrame=cf
+	a.Parent=p
+	return a
+end
+local h=pt('Head',vn(1,1,2))
+local t=pt('Torso',trs)
+local c=lp.Character
+local cp=fi(c,'BasePart','HumanoidRootPart')or fi(c,'BasePart','Head')or fi(c,'BasePart','Torso')or fi(c,'BasePart','LowerTorso')or c and c:FindFirstChildOfClass('BasePart', true)
+local hr=pt('HumanoidRootPart',trs)
+hr.CFrame=cp and cp.CFrame or cfn(0, 10, 0)
+local ra=pt('Right Arm',ls)
+local la=pt('Left Arm',ls)
+local rl=pt('Right Leg',ls)
+local ll=pt('Left Leg',ls)
+local hu=inn('Humanoid',r)
+local fa=inn('Decal')
+fa.Name='face'
+fa.Parent=h
+local me=inn('SpecialMesh')
+me.Name='Mesh'
+me.MeshType=Enum.MeshType.Head
+me.Scale=vn(1.25,1.25,1.25)
+me.Parent=h
+inn('Animator',hu)
+m('Right Shoulder',t,ra,cfn(1,0.5,0,0,0,1,0,1,0,-1,-0,-0),cfn(-0.5,0.5,0,0,0,1,0,1,0,-1,-0,-0))
+m('Left Shoulder',t,la,cfn(-1,0.5,0,-0,-0,-1,0,1,0,1,0,0),cfn(0.5,0.5,0,-0,-0,-1,0,1,0,1,0,0))
+m('Right Hip',t,rl,cfn(1,-1,0,0,0,1,0,1,0,-1,-0,-0),cfn(0.5,1,0,0,0,1,0,1,0,-1,-0,-0))
+m('Left Hip',t,ll,cfn(-1,-1,0,-0,-0,-1,0,1,0,1,0,0),cfn(-0.5,1,0,-0,-0,-1,0,1,0,1,0,0))
+m('Neck',t,h,cfn(0,1,0,-1,-0,-0,0,0,1,0,1,0),cfn(0,-0.5,0,-1,-0,-0,0,0,1,0,1,0))
+m('RootJoint',hr,t,cfn(0,0,0,-1,-0,-0,0,0,1,0,1,0),cfn(0,0,0,-1,-0,-0,0,0,1,0,1,0))
+inn('BodyColors',r)
+inn('Shirt',r)
+inn('Pants',r)
+inn('ShirtGraphic',r)
+at('HairAttachment',cfn(0,0.600000024,0,1,0,0,0,1,0,0,0,1),h)
+at('HatAttachment',cfn(0,0.600000024,0,1,0,0,0,1,0,0,0,1),h)
+at('FaceFrontAttachment',cfn(0,0,-0.600000024,1,0,0,0,1,0,0,0,1),h)
+at('FaceCenterAttachment',cfn(0,0,0,1,0,0,0,1,0,0,0,1),h)
+at('NeckAttachment',cfn(0,1,0,1,0,0,0,1,0,0,0,1),t)
+at('BodyFrontAttachment',cfn(0,0,-0.5,1,0,0,0,1,0,0,0,1),t)
+at('BodyBackAttachment',cfn(0,0,0.5,1,0,0,0,1,0,0,0,1),t)
+at('LeftCollarAttachment',cfn(-1,1,0,1,0,0,0,1,0,0,0,1),t)
+at('RightCollarAttachment',cfn(1,1,0,1,0,0,0,1,0,0,0,1),t)
+at('WaistFrontAttachment',cfn(0,-1,-0.5,1,0,0,0,1,0,0,0,1),t)
+at('WaistCenterAttachment',cfn(0,-1,0,1,0,0,0,1,0,0,0,1),t)
+at('WaistBackAttachment',cfn(0,-1,0.5,1,0,0,0,1,0,0,0,1),t)
+at('LeftShoulderAttachment',cfn(0,1,0,1,0,0,0,1,0,0,0,1),la)
+at('LeftGripAttachment',cfn(0,-1,0,1,0,0,0,1,0,0,0,1),la)
+at('RightShoulderAttachment',cfn(0,1,0,1,0,0,0,1,0,0,0,1),ra)
+at('RightGripAttachment',cfn(0,-1,0,1,0,0,0,1,0,0,0,1),ra)
+at('LeftFootAttachment',cfn(0,-1,0,1,0,0,0,1,0,0,0,1),ll)
+at('RightFootAttachment',cfn(0,-1,0,1,0,0,0,1,0,0,0,1),rl)
+at('RootAttachment',cfn(0,0,0,1,0,0,0,1,0,0,0,1),hr)
+r.PrimaryPart=h
+local function rc(c,cf)
+	c:GetPropertyChangedSignal('CFrame'):Wait()
+	c.CFrame=cf
+end
+local function f(c)
+	wfcoc(c,'Humanoid')
+	tw()
+	local cf=cc.CFrame
+	cc.CameraSubject=chch
+	lp.Character=chc
+	ts(rc,cc,cf)
+end
+local function aac(h,hc,m,tid)
+	local al=true
+	for _,t in pairs(acst)do
+		if sm(m,t.m)and sm(tid,t.t) and not e(t.h)then
+			local n=t.n
+			if type(n)=="string"then
+				n=fi(chc,"BasePart",n)
+			end
+			if typeof(n)=="Instance"then
+				t.h=h
+				ti(a,{h,n,t.c})
+				al=false
+				break
+			end
+		end
+	end
+	if al then
+		ti(a,{h,hc})
+	end
+end
+local function caf(i)
+	local m=true
+	local h=wfcocan(i,'BasePart','Handle')
+	local mp=h:IsA('MeshPart')
+	local s=mp and h or wfcoc(h,'SpecialMesh')
+	local tid=mp and'TextureID'or'TextureId'
+	local sm=s.MeshId
+	local st=s[tid]
+	for _,t in pairs(acs)do
+		if t[1]==sm and t[2]==st and not e(t[3])then
+			t[3]=h
+			m=false
+			aac(h,t[4],sm,st)
+			break
+		end
+	end
+	if m then
+		local ic=i:Clone()
+		local ih=wfcocan(ic,'BasePart','Handle')
+		ih.Transparency=1
+		ih:BreakJoints()
+		local at=wfcoc(ih,'Attachment')
+		local n=at.Name
+		local w=inn('Weld')
+		w.Name='AccessoryWeld'
+		w.Part0=ih
+		w.C0=at.CFrame
+		for _,at in pairs(chc:GetDescendants())do
+			if at:IsA('Attachment')and at.Name==n then
+				w.Part1=at.Parent
+				w.C1=at.CFrame
+			end
+		end
+		w.Parent=ih
+		ic.Parent=chc
+		aac(h,ih,sm,st)
+		ti(acs,{sm,st,h,ih})
+	end
+end
+local function ca(i)
+	if i:IsA('Accessory')then
+		ts(caf,i)
+	end
+end
+local function cl(c)
+	while e(c)do
+		for _,b in pairs(c:GetChildren())do
+			if b:IsA("BasePart")then
+				b.CanCollide=false
+			end
+		end
+		prs:Wait()
+	end
+end
+local function oca()
+	local c=lp.Character
+	if c and c~=chc then
+		tc(a)
+		ts(f,c)
+		local cf=cc.CFrame
+		cc.CameraSubject=chch
+		ts(rc,cc,cf)
+		ts(cl,c)
+		local hr=wfcocan(c,'BasePart','HumanoidRootPart')
+		for _,i in pairs(fl)do
+			if hr and typeof(i)=="Instance"then
+				if i:IsA("Humanoid")then
+					i=i.Parent
+				end
+				if i:IsA("Model")then
+					i=fi(i,"BasePart","HumanoidRootPart")
+				end
+				if e(i)and i:IsA("BasePart")and not i.Anchored then
+					local s=oc()
+					while e(hr)and e(i)and i.AssemblyLinearVelocity.Magnitude<=50 and oc()-s<=1 do
+						hr.AssemblyAngularVelocity=vf
+						hr.AssemblyLinearVelocity=vf
+						hr.CFrame=i.CFrame
+						ps:Wait()
+					end
+				end
+			end
+		end
+		if chr and hr then
+			rp.FilterDescendantsInstances={c}
+			local simn=mi(32,oc()-sim)
+			local p=chr.CFrame*cfn(mr(-simn,simn),0,mr(-simn,simn))
+			local r=w:Raycast(p.Position,rad,rp)
+			hr.AssemblyLinearVelocity=vz
+			hr.AssemblyAngularVelocity=vz
+			hr.CFrame=r and cfn(r.Position)or p
+		end
+		prs:Wait()
+		c:BreakJoints()
+		for _,i in pairs(c:GetChildren())do
+			ca(i)
+		end
+		c.ChildAdded:Connect(ca)
+	end
+end
+local function sr(be)
+	ip:Disconnect()
+	chp:Disconnect()
+	con:Disconnect()
+	ad:Disconnect()
+	tc(a)
+	tc(l)
+	tc(acs)
+	if e(chc)then
+		chc:Destroy()
+	end
+	if e(be)then
+		be:Destroy()
+	end
+end
+local function sc(be)
+	sg:SetCore('ResetButtonCallback',be)
+end
+local function cn(p0,p1,c)
+	if e(p0)and not p0.Anchored and p0.ReceiveAge==0 and e(p1)then
+		p0.AssemblyAngularVelocity=vz
+		local p=p1.Position
+		if not l[p0]then
+			l[p0]=p
+		end
+		local lv=((p-l[p0])/dt)
+		local lvn=lv*27
+		p0.AssemblyLinearVelocity=vn(lvn.X,27,lvn.Z)
+		l[p0]=p
+		p0.CFrame=p1.CFrame*ans*(c or cfi)
+	end
+end
+local function yeah()
+	chc=r:Clone()
+	chch=chc.Humanoid
+	chr=chc.HumanoidRootPart
+	chc.Parent=w
+	ip=ui.InputBegan:Connect(function(i,g)
+		if not g then
+			local up=i.UserInputType
+			if up==ut or up==um then
+				local t=mo.Target
+				if e(t)then
+					local p=t.Parent
+					if p:IsA("Model") and p~=chc and p:FindFirstChildOfClass("Humanoid")then
+						ti(fl,p)
+					end
+				end
+			end
+		end
+	end)
+	local be=inn('BindableEvent')
+	be.Event:Connect(sr,be)
+	chp=chc:GetPropertyChangedSignal('Parent'):Connect(function()
+		if not e(chc)then
+			sr(be)
+		end
+	end)
+	local s=false
+	con=ps:Connect(function()
+		tim=oc()
+		dt=tim-ltim
+		ltim=tim
+		if not s then
+			s=pcall(sc,be)
+		else
+			sc(be)
+		end
+		if shp then
+			shp(lp,'SimulationRadius',1000)
+		end
+		local ax=0.005*si(tim*15)
+		ans=cfn(ax,0,ax)
+		for _,t in pairs(a)do
+			cn(t[1],t[2],t[3])
+		end
+	end)
+	fc()
+	oca()
+	ad=lp:GetPropertyChangedSignal('Character'):Connect(oca)
+end
+yeah()
